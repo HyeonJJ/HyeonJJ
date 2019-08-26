@@ -1,0 +1,35 @@
+<script>
+  var temp=location.href.split("&");
+  data=temp[1].split(":");
+  post_id_list=data[1].split("/");
+
+
+
+  sp=temp[0].split("?");
+  board_data=sp[1].split(":");
+  board_id=board_data[1];
+
+for(var i=0;i<post_id_list.length-1;i++){
+let url = 'http://27.1.60.24:9900/board/deletePost'
+fetch(url, {
+method: 'POST',
+headers: {
+'Accept': 'application/json',
+'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+postId: post_id_list[i]
+})
+})
+.then((response) => response.json())
+.then((jsonObj) => {
+console.log(jsonObj)
+if(jsonObj.result == "ok") {
+  window.location.href="board.html?boardid:"+board_id;
+// move to main page -> router
+} else if(jsonObj.result == "fail") {
+alert('error! reason is:' + jsonObj.error);
+}
+})
+}
+</script>

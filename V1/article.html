@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+    <title>BOARD1</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+
+  </head>
+  <body>
+    <div id="grid_reactB">
+      <span><a href="index.html">React Board</a></span>
+
+    <div id="reactB">
+      <span><a href="index.html">게시판</a></span>
+      <span>소개</span>
+      <span>사진</span>
+      <span>로그인</span>
+    </div>
+    </div>
+    <div id="grid">
+      <div id="board">
+      <h1>게시판</h1>
+    </div>
+      <div id="article">
+        <h2></h2>
+        <h3><font color='black'>by</font> </h3>
+        <hr color="#E6E6E6" size="1px">
+        <h4><font color='black'>Posted on</font> </h4>
+        <hr color="#E6E6E6" size="1px">
+        <article>
+
+        </article>
+        <p></p>
+
+        <script>
+            var temp=location.href.split("&");
+            data=temp[1].split(":");
+            post_id=data[1];
+
+
+            sp=temp[0].split("?");
+            board_data=sp[1].split(":");
+            board_id=board_data[1];
+
+
+            fetch('http://27.1.60.24:9900/board/post/'+String(post_id)
+                ,{method:'GET'})
+                .then((response) => response.json())
+                .then((jsonObj) =>  {
+
+                      console.log(jsonObj.postDetail)
+                      document.querySelector('h2').innerHTML=jsonObj.postDetail.post_title;
+                      document.querySelector('h3').innerHTML+=jsonObj.postDetail.post_user_name;
+                      document.querySelector('h4').innerHTML+=jsonObj.postDetail.post_reg_date;
+                      document.querySelector('article').innerHTML=jsonObj.postDetail.post_content;
+                      document.querySelector('p').innerHTML='[ IP : '+ jsonObj.postDetail.post_reg_ip+' ]';
+                    })
+
+                    let url_boardList  = 'http://27.1.60.24:9900/board/boardList'
+                    fetch(url_boardList , {
+                    method: 'GET'
+                    })
+                    .then((response) => response.json())
+                    .then((jsonObj) => {
+                    console.log(jsonObj.boardList)
+                    for(var i=0;i<jsonObj.boardList.length;i++){
+                      document.querySelector('div #board').innerHTML+="<div id='bd'><a href=''></a></div>";
+                      document.querySelectorAll('div #bd a')[i].innerHTML=jsonObj.boardList[i].board_name;
+                      document.querySelectorAll('#bd a')[i].setAttribute('href', 'board.html?boardid:'+jsonObj.boardList[i].id);
+
+                  }
+                  })
+
+        </script>
+        <script>
+          function modifyPost(){
+            window.location.href="modifyPost.html?boardid:"+board_id+'&postid:'+post_id;
+          }
+          function deletePost(){
+            window.location.href="deletepost.html?boardid:"+board_id+'&postid:'+post_id;
+          }
+        </script>
+        <div id="btn_group">
+        <button id="btn_Del" style="float: right;" onclick="deletePost()">삭제</button>
+        <button id="btn_Modify" style="float: right;" onclick="modifyPost()">글수정</button>
+      </div>
+      </div>
+
+    </div>
+    <div id="copyright">
+      <p>Copyright @ Your Website 2019</p>
+    </div>
+  </body>
+</html>

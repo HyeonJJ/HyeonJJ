@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+  <head>
+    <title>React BOARD1</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+
+  </head>
+  <body>
+    <div id="grid_reactB">
+      <span><a href="index.html">React Board</a></span>
+
+    <div id="reactB">
+      <span><a href="index.html">게시판</a></span>
+      <span>소개</span>
+      <span>사진</span>
+      <span>로그인</span>
+    </div>
+    </div>
+    <div id="grid">
+      <div id="board">
+      <h1>게시판</h1>
+    </div>
+          <div id="post_list">
+
+           <table>
+             <thead>
+               <tr>
+                <td id="check">
+
+                  <input type="checkbox" id="checkAll" onclick="check()">
+                </td>
+                 <th> 게시글 리스트</th>
+
+               </tr>
+             </thead>
+             <tbody>
+               <script>
+
+
+               var temp=location.href.split("?");
+               data=temp[1].split(":");
+               board_id=data[1];
+                 var post_id='';
+                 fetch(
+                       'http://27.1.60.24:9900/board/postList/'+board_id
+                       ,{method: 'GET'})
+                       .then((response) => response.json())
+                       .then((jsonObj) => {
+                             console.log(jsonObj.postList)
+                             for(i=0;i<jsonObj.postList.length;i++){
+
+
+                            document.querySelector('tbody').innerHTML+="<tr><td><input type='checkbox' name='chk'></td><td><a href='#'></a><br><p></p></td></tr>"
+
+                             document.querySelectorAll('#post_list a')[i].innerHTML=jsonObj.postList[i].post_title;
+
+
+                             document.querySelectorAll('#post_list p')[i].innerHTML="등록일 : " +jsonObj.postList[i].post_reg_date
+                                                                                   + " / IP : " + jsonObj.postList[i].post_reg_ip;
+                             document.querySelectorAll('#post_list a')[i].setAttribute('href', 'article.html?boardid:'+board_id+'&postid:'+post_id);
+                            document.querySelectorAll('td input[type=checkbox]')[i+1].setAttribute('value', jsonObj.postList[i].id);
+
+
+
+                           }
+                         })
+
+                         let url_boardList  = 'http://27.1.60.24:9900/board/boardList'
+                         fetch(url_boardList , {
+                         method: 'GET'
+                         })
+                         .then((response) => response.json())
+                         .then((jsonObj) => {
+                         console.log(jsonObj.boardList)
+                         for(var i=0;i<jsonObj.boardList.length;i++){
+                           document.querySelector('div #board').innerHTML+="<div id='bd'><a href=''></a></div>";
+                           document.querySelectorAll('div #bd a')[i].innerHTML=jsonObj.boardList[i].board_name;
+                           document.querySelectorAll('#bd a')[i].setAttribute('href', 'board.html?boardid:'+jsonObj.boardList[i].id);
+
+                       }
+                       })
+
+                       function check(){
+                           var checkAll=document.getElementById("checkAll");
+
+                           var chk=document.getElementsByName("chk");
+
+                           for(var i=0;i<chk.length;i++){
+                             chk[i].checked=checkAll.checked;
+
+                           }
+
+
+                       }
+
+                       function delPsts(){
+                      var cnt=0;
+                      var id_list= new Array();
+                        var chk=document.getElementsByName("chk");
+                         for(var i=0;i<chk.length;i++){
+                           if(chk[i].checked==true){
+                              cnt++;
+                              id_list.push(chk[i].value);
+
+                           }
+
+
+
+                         }
+                        for (var j=0; j<cnt;j++){
+                          post_id+=id_list[j]+'/';
+                        }
+                        window.location.href="deleteposts.html?boardid:"+board_id+"&postid:"+post_id;
+                        console.log(post_id);
+
+                       }
+
+                 </script>
+
+           </tbody>
+           <tr>
+             <td></td>
+             <td>
+               <script>
+                 function writePost(){
+                   window.location.href="write.html?boardid:"+board_id;
+                 }
+                 function deletePost(bi,pi){
+
+                   window.location.href="deletepost.html?boardid:"+String(board_id)+"&postid:"+String(post_id);
+
+                 }
+               </script>
+               <div id="btn_group">
+               <button id="btn_Del" style="float: right;" onclick="delPsts()">삭제</button>
+               <button id="btn_Write" style="float: right;" onclick="writePost()">글쓰기</button>
+             </div>
+             </td>
+           </tr>
+         </table>
+           </div>
+
+
+     </div>
+     <div id="copyright">
+       <p>Copyright @ Your Website 2019</p>
+     </div>
+   </body>
+ </html>

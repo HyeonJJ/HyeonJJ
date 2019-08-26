@@ -1,0 +1,123 @@
+
+<!doctype html>
+<html>
+  <head>
+    <title>BOARD1</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+
+  </head>
+  <body>
+    <div id="grid_reactB">
+      <span><a href="index.html">React Board</a></span>
+
+    <div id="reactB">
+      <span><a href="index.html">게시판</a></span>
+      <span>소개</span>
+      <span>사진</span>
+      <span>로그인</span>
+    </div>
+    </div>
+    <div id="grid">
+      <div id="board">
+      <h1>게시판</h1>
+    </div>
+    <form method="post" id="write">
+
+      <div>
+      <label for="userName">이름:</label>
+      <input type="text" name="userName"  maxlength="10" value="" >
+      </div>
+      <div>
+      <label for="ip">ip:</label>
+      <input type="text" name="ip"  maxlength="20" value="">
+      </div>
+      <div>
+      <label for="title">제목:</label>
+      <input type="text" name="title"  maxlength="50" value="">
+      </div>
+      <div>
+      <label for="content">내용:</label>
+      <textarea name="content" rows="8" cols="80"></textarea>
+      </div>
+      <div class="button">
+          <input type="button" id="submitB" value="저장">
+      </div>
+
+
+    <script>
+      var temp=location.href.split("&");
+      data=temp[1].split(":");
+      post_id=data[1];
+
+
+      sp=temp[0].split("?");
+      board_data=sp[1].split(":");
+      board_id=board_data[1];
+
+        fetch('http://27.1.60.24:9900/board/post/'+post_id
+            ,{method:'GET'})
+            .then((response) => response.json())
+            .then((jsonObj) =>  {
+
+                  console.log(jsonObj.postDetail)
+
+                  document.querySelectorAll('#write input')[0].setAttribute('value', jsonObj.postDetail.post_user_name);
+                  document.querySelectorAll('#write input')[1].setAttribute('value', jsonObj.postDetail.post_reg_ip);
+                  document.querySelectorAll('#write input')[2].setAttribute('value', jsonObj.postDetail.post_title);
+                  document.querySelector('#write textarea').innerHTML=jsonObj.postDetail.post_content;
+                })
+
+                var submitB = document.getElementById('submitB');
+                submitB.addEventListener('click', function(event){
+
+
+                  let url = 'http://27.1.60.24:9900/board/writePost/'+board_id
+                  fetch(url, {
+                          method: 'POST',
+                          headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({
+                                userName: document.getElementsByName('userName')[0].value,
+                                ip: document.getElementsByName('ip')[0].value,
+                                title: document.getElementsByName('title')[0].value,
+                                content:document.getElementsByName('content')[0].value
+                          })
+                    })
+                    .then((response) => response.json())
+                    .then((jsonObj) => {
+                          console.log(jsonObj)
+                          if(jsonObj.result == "ok") {
+
+                                 window.location.href="deletepost.html?boardid:"+board_id+"&postid:"+post_id;
+
+                          } else if(jsonObj.result == "fail") {
+                                    alert('error! reason is:' + jsonObj.error);
+                          }
+                  })
+                });
+                let url_boardList = 'http://27.1.60.24:9900/board/boardList'
+                fetch(url_boardList , {
+                method: 'GET'
+                })
+                .then((response) => response.json())
+                .then((jsonObj) => {
+                console.log(jsonObj.boardList)
+                for(var i=0;i<jsonObj.boardList.length;i++){
+                document.querySelector('div #board').innerHTML+="<div id='bd'><a href=''></a></div>";
+                document.querySelectorAll('div #bd a')[i].innerHTML=jsonObj.boardList[i].board_name;
+                document.querySelectorAll('#bd a')[i].setAttribute('href', 'board.html?boardid:'+jsonObj.boardList[i].id);
+              }
+
+    })
+
+    </script>
+  </form>
+  </div>
+          <div id="copyright">
+            <p>Copyright @ Your Website 2019</p>
+          </div>
+  </body>
+</html>

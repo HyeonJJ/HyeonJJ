@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React BOARD1</title>
+    <meta charset="utf-8">
+
+
+        <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+      <div id="grid_reactB">
+        <span><a href="index.html">React Board</a></span>
+
+      <div id="reactB">
+        <span><a href="index.html">게시판</a></span>
+        <span>소개</span>
+        <span>사진</span>
+        <span>로그인</span>
+      </div>
+      </div>
+      <div id="grid">
+        <div id="board">
+        <h1>게시판</h1>
+      </div>
+      <div>
+      <img src="index.jpg" width="830px">
+      </div>
+
+      <script>
+
+
+      let url = 'http://27.1.60.24:9900/board/boardList'
+      fetch(url, {
+      method: 'GET'
+      })
+      .then((response) => response.json())
+      .then((jsonObj) => {
+      console.log(jsonObj.boardList)
+      for(var i=0;i<jsonObj.boardList.length;i++){
+        document.querySelector('div #board').innerHTML+="<div id='bd'><a href=''></a></div>";
+        document.querySelectorAll('div #bd a')[i].innerHTML=jsonObj.boardList[i].board_name;
+        document.querySelectorAll('#bd a')[i].setAttribute('href', 'board.html?boardid:'+jsonObj.boardList[i].id);
+
+    }
+    })
+
+      </script>
+      </div>
+      <div id="copyright">
+        <p>Copyright @ Your Website 2019</p>
+      </div>
+    </body>
+    </html>
